@@ -35,6 +35,14 @@ func main() {
 	fmt.Printf("Net Earnings: %.1f\n", netEarnings)
 
 	writeToFile(fmt.Sprintf("Earnings Before Tax: %.1f\nTax Amount: %.1f\nNet Earnings: %.1f\n", earningsBeforeTax, taxAmount, netEarnings))
+
+	err, text := readFromFile()
+	if err != nil {
+		println(err.Error())
+		return
+	}
+	fmt.Println(text)
+
 }
 
 func getuserInput(prompt string) (float64, error) {
@@ -58,4 +66,12 @@ func writeToFile(content string) error {
 	text := fmt.Sprint(content)
 	err := os.WriteFile("file.txt", []byte(text), 0644)
 	return err
+}
+
+func readFromFile() (error, string) {
+	data, err := os.ReadFile("file.txt")
+	if err != nil {
+		return err, ""
+	}
+	return nil, string(data)
 }
