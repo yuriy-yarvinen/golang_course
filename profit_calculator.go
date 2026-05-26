@@ -7,31 +7,44 @@ func main() {
 	var revenue float64
 	var expenses float64
 	var taxRate float64
+	var err error
 
-	println("Enter total revenue: ")
-	_, err := fmt.Scanln(&revenue)
+	revenue, err = getuserInput("Enter total revenue: ")
 	if err != nil {
-		println("Invalid input for revenue. Please enter a valid number.")
+		println(err.Error())
 		return
 	}
 
-	println("Enter total expenses: ")
-	_, err = fmt.Scanln(&expenses)
+	expenses, err = getuserInput("Enter total expenses: ")
 	if err != nil {
-		println("Invalid input for expenses. Please enter a valid number.")
+		println(err.Error())
 		return
 	}
 
-	println("Enter tax rate (as a decimal, e.g., 0.2 for 20%): ")
-	_, err = fmt.Scanln(&taxRate)
+	taxRate, err = getuserInput("Enter tax rate (as a percentage, e.g., 20 for 20%): ")
 	if err != nil {
-		println("Invalid input for tax rate. Please enter a valid number.")
+		println(err.Error())
 		return
 	}
+	netEarnings, taxAmount, earningsBeforeTax := calculateNetEarnings(revenue, expenses, taxRate)
+	fmt.Printf("Earnings Before Tax: %.1f\n", earningsBeforeTax)
+	fmt.Printf("Tax Amount: %.1f\n", taxAmount)
+	fmt.Printf("Net Earnings: %.1f\n", netEarnings)
+}
 
+func getuserInput(prompt string) (float64, error) {
+	var input float64
+	println(prompt)
+	_, err := fmt.Scanln(&input)
+	if err != nil {
+		return 0, fmt.Errorf("invalid input: %v", err)
+	}
+	return input, nil
+}
+
+func calculateNetEarnings(revenue, expenses, taxRate float64) (float64, float64, float64) {
 	earningsBeforeTax := revenue - expenses
-	taxAmount := earningsBeforeTax * taxRate
+	taxAmount := earningsBeforeTax * (taxRate / 100)
 	netEarnings := earningsBeforeTax - taxAmount
-
-	fmt.Printf("Net Earnings: %.2f\n", netEarnings)
+	return netEarnings, taxAmount, earningsBeforeTax
 }
