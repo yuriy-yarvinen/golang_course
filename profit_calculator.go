@@ -1,6 +1,9 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"os"
+)
 
 func main() {
 
@@ -30,6 +33,8 @@ func main() {
 	fmt.Printf("Earnings Before Tax: %.1f\n", earningsBeforeTax)
 	fmt.Printf("Tax Amount: %.1f\n", taxAmount)
 	fmt.Printf("Net Earnings: %.1f\n", netEarnings)
+
+	writeToFile(fmt.Sprintf("Earnings Before Tax: %.1f\nTax Amount: %.1f\nNet Earnings: %.1f\n", earningsBeforeTax, taxAmount, netEarnings))
 }
 
 func getuserInput(prompt string) (float64, error) {
@@ -47,4 +52,10 @@ func calculateNetEarnings(revenue, expenses, taxRate float64) (float64, float64,
 	taxAmount := earningsBeforeTax * (taxRate / 100)
 	netEarnings := earningsBeforeTax - taxAmount
 	return netEarnings, taxAmount, earningsBeforeTax
+}
+
+func writeToFile(content string) error {
+	text := fmt.Sprint(content)
+	err := os.WriteFile("file.txt", []byte(text), 0644)
+	return err
 }
