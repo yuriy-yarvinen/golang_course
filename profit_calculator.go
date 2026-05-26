@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"os"
 )
@@ -36,7 +37,7 @@ func main() {
 
 	writeToFile(fmt.Sprintf("Earnings Before Tax: %.1f\nTax Amount: %.1f\nNet Earnings: %.1f\n", earningsBeforeTax, taxAmount, netEarnings))
 
-	err, text := readFromFile()
+	text, err := readFromFile()
 	if err != nil {
 		println(err.Error())
 		return
@@ -68,10 +69,10 @@ func writeToFile(content string) error {
 	return err
 }
 
-func readFromFile() (error, string) {
+func readFromFile() (string, error) {
 	data, err := os.ReadFile("file.txt")
 	if err != nil {
-		return err, ""
+		return "", errors.New("error reading from file")
 	}
-	return nil, string(data)
+	return string(data), nil
 }
