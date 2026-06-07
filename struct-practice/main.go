@@ -7,22 +7,47 @@ import (
 	"strings"
 
 	"yarvinen.ru/struct-practice/note"
+	"yarvinen.ru/struct-practice/todo"
 )
+
+type Saver interface {
+	Save() error
+}
+
+type Printer interface {
+	Print()
+}
+
+type Outputter interface {
+	Saver
+	Printer
+}
 
 func main() {
 	title := getUserInput("Enter note title:")
 	content := getUserInput("Enter note content:")
+	text := getUserInput("Enter todo text:")
 
 	Note, err := note.New(title, content)
 	if err != nil {
 		fmt.Println("Error creating note:", err)
 		return
 	}
+	Todo, err := todo.New(text)
+	if err != nil {
+		fmt.Println("Error creating todo:", err)
+		return
+	}
 
-	Note.PrintNote()
-	err = Note.Save()
+	err = saveAndPrint(Note)
 	if err != nil {
 		fmt.Println("Error saving note:", err)
+		return
+	}
+
+	err = saveAndPrint(Todo)
+	if err != nil {
+		fmt.Println("Error saving todo:", err)
 		return
 	}
 }
@@ -42,4 +67,18 @@ func getUserInput(prompt string) string {
 		return getUserInput(prompt)
 	}
 	return input
+}
+
+func saveData(data Saver) error {
+	err := data.Save()
+	if err != nil {
+		fmt.Println("Error saving data:", err)
+		return err
+	}
+	return nil
+}
+
+func saveAndPrint(data Outputter) error {
+	data.Print()
+	return saveData(data)
 }
