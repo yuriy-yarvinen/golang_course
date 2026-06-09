@@ -6,8 +6,8 @@ import (
 	"os"
 	"strings"
 
-	"yarvinen.ru/struct-practice/note"
-	"yarvinen.ru/struct-practice/todo"
+	"yarvinen.ru/struct-practice/noteClass"
+	"yarvinen.ru/struct-practice/todoClass"
 )
 
 type Saver interface {
@@ -28,12 +28,13 @@ func main() {
 	content := getUserInput("Enter note content:")
 	text := getUserInput("Enter todo text:")
 
-	Note, err := note.New(title, content)
+	Note, err := noteClass.New(title, content)
 	if err != nil {
 		fmt.Println("Error creating note:", err)
 		return
 	}
-	Todo, err := todo.New(text)
+
+	Todo, err := todoClass.New(text)
 	if err != nil {
 		fmt.Println("Error creating todo:", err)
 		return
@@ -81,4 +82,17 @@ func saveData(data Saver) error {
 func saveAndPrint(data Outputter) error {
 	data.Print()
 	return saveData(data)
+}
+
+func PrintSomeData(data interface{}) {
+	switch v := data.(type) {
+	case noteClass.Note:
+		fmt.Printf("Note Title: %s, Note Content: %s\n", v.Title, v.Content)
+	case todoClass.Todo:
+		fmt.Printf("Todo Text: %s\n", v.Text)
+	default:
+		fmt.Printf("Unknown type: %T\n", v)
+	}
+
+	fmt.Printf("Data: %v\n", data)
 }

@@ -1,4 +1,4 @@
-package note
+package noteClass
 
 import (
 	"encoding/json"
