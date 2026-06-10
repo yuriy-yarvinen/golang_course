@@ -43,4 +43,8 @@ func main() {
 
 	println("User Names:")
 	userNames.print()
+
+	for index, value := range userNames {
+		println("Index:", index, "Value:", value)
+	}
 }
