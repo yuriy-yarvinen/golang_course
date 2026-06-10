@@ -48,6 +48,17 @@ func main() {
 	for _, product := range products {
 		fmt.Println("Title:", product.title, "ID:", product.id, "Price:", product.price)
 	}
+
+	newProducts := []Product{
+		{title: "Headphones", id: 4, price: 199.99},
+		{title: "Smartwatch", id: 5, price: 199.99},
+	}
+
+	products = append(products, newProducts...)
+	fmt.Println("Final Products:")
+	for _, product := range products {
+		fmt.Println("Title:", product.title, "ID:", product.id, "Price:", product.price)
+	}
 }
 
 // Time to practice what you learned!
