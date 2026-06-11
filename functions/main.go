@@ -40,6 +40,25 @@ func main() {
 		println(number)
 	}
 
+	newNumbers := []int{11, 12, 13, 14, 15}
+
+	transformedNewNumbers := transformNumbers(&newNumbers, func(n int) int {
+		return n * 4
+	})
+	println("Transformed new numbers using anonymous function:")
+
+	for _, number := range transformedNewNumbers {
+		println(number)
+	}
+
+	multiplierByfiveFunction := createTrasformerFunction(5)
+	transformedNewNumbers = transformNumbers(&newNumbers, multiplierByfiveFunction)
+
+	println("Transformed new numbers using function from createTrasformerFunction with multiplier 5:")
+	for _, number := range transformedNewNumbers {
+		println(number)
+	}
+
 }
 
 func transformNumbers(numbers *[]int, multiplierFunc func(int) int) []int {
@@ -65,4 +84,10 @@ func double(n int) int {
 
 func triple(n int) int {
 	return n * 3
+}
+
+func createTrasformerFunction(multiplier int) func(number int) int {
+	return func(number int) int {
+		return number * multiplier
+	}
 }
