@@ -2,14 +2,20 @@ package filemanager
 
 import (
 	"bufio"
+	"encoding/json"
 	"errors"
 	"os"
 )
 
-// ReadLines opens the file at the given path and returns its content as a slice
+type FileManager struct {
+	InputFilePath  string
+	OutputFilePath string
+}
+
+// ReadLines opens the file at the given FileManager InputFilePath and returns its content as a slice
 // of strings, one per line. It returns an error if the file cannot be opened or read.
-func ReadLines(path string) ([]string, error) {
-	file, err := os.Open(path)
+func (fileManager FileManager) ReadLines() ([]string, error) {
+	file, err := os.Open(fileManager.InputFilePath)
 	if err != nil {
 		return nil, errors.New("error reading file")
 	}
@@ -26,4 +32,21 @@ func ReadLines(path string) ([]string, error) {
 	}
 	file.Close()
 	return lines, nil
+}
+
+func (fileManager FileManager) WriteJSON(data interface{}) error {
+	file, err := os.Create(fileManager.OutputFilePath)
+	if err != nil {
+		return err
+	}
+
+	encoder := json.NewEncoder(file)
+	err = encoder.Encode(data)
+	if err != nil {
+		file.Close()
+		return err
+	}
+
+	file.Close()
+	return nil
 }
