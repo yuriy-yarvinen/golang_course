@@ -11,6 +11,7 @@ func main() {
 		OutputFilePath: "result.json",
 		InputFilePath:  "prices.txt",
 	}
+	// cmdmanager := cmdmanager.CMDmanager{}
 
 	for _, taxRate := range taxRates {
 		priceJob := prices.NewTaxIncludedPriceJob(taxRate, fileManager)
