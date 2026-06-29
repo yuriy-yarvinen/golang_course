@@ -2,17 +2,6 @@
 
 Learning Go — practice programs.
 
-## Project layout
-
-```
-.
-├── profit_calculator.go   # standalone example at the repo root
-└── course1/
-    ├── bank.go            # banking program — main, balance file I/O
-    ├── menu.go            # presentMenu() helper, same package main
-    └── go.mod
-```
-
 ## Running the programs
 
 ### `course1/` (the bank program)
