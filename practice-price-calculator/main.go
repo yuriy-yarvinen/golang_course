@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"yarvinen-price-calculator/filemanager"
 	"yarvinen-price-calculator/prices"
 )
@@ -15,6 +16,10 @@ func main() {
 
 	for _, taxRate := range taxRates {
 		priceJob := prices.NewTaxIncludedPriceJob(taxRate, fileManager)
-		priceJob.Process()
+		err := priceJob.Process()
+		if err != nil {
+			fmt.Println("error")
+			fmt.Println(err)
+		}
 	}
 }
