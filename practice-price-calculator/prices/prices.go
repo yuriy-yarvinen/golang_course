@@ -24,22 +24,36 @@ type PriceInfo struct {
 
 // Process loads the input prices, applies the tax rate to each of them and
 // prints the resulting tax-included prices.
-func (job TaxIncludedPriceJob) Process() error {
+func (job TaxIncludedPriceJob) Process(channel chan bool) {
+	defer close(channel)
+
 	err := job.LoadData()
 	if err != nil {
-		return err
+		fmt.Println("error loading data")
+		fmt.Println(err)
+		channel <- false
+		return
 	}
-	result := make(map[string]PriceInfo)
+	taxKey := fmt.Sprintf("%.2f", job.TaxRate*100)
+	result := make(map[string]map[string]PriceInfo)
+	result[taxKey] = make(map[string]PriceInfo)
 	for _, price := range job.InputPrices {
 		PriceInfo := PriceInfo{
-			TaxRate:       fmt.Sprintf("%.2f", job.TaxRate*100),
+			TaxRate:       taxKey,
 			Price:         fmt.Sprintf("%.2f", price),
 			PriceAfterTax: fmt.Sprintf("%.2f", price*(1+job.TaxRate)),
 		}
-		result[fmt.Sprintf("%.2f", price)] = PriceInfo
-	}
 
-	return job.IOManager.WriteResult(result)
+		result[taxKey][fmt.Sprintf("%.2f", price)] = PriceInfo
+	}
+	errWrite := job.IOManager.WriteResult(result)
+	if errWrite != nil {
+		fmt.Println("error writing result")
+		fmt.Println(errWrite)
+		channel <- false
+		return
+	}
+	channel <- true
 }
 
 // LoadData reads the prices from the "prices.txt" file, converts them to

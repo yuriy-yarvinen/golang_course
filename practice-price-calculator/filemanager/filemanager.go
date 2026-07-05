@@ -5,7 +5,13 @@ import (
 	"encoding/json"
 	"errors"
 	"os"
+	"sync"
+	"time"
 )
+
+// writeMutex сериализует запись в файл: пока одна горутина держит лок,
+// остальные ждут Unlock и не могут писать одновременно.
+var writeMutex sync.Mutex
 
 type FileManager struct {
 	InputFilePath  string
@@ -35,18 +41,39 @@ func (fileManager FileManager) ReadLines() ([]string, error) {
 }
 
 func (fileManager FileManager) WriteResult(data interface{}) error {
-	file, err := os.Create(fileManager.OutputFilePath)
+	time.Sleep(3 * time.Second) // Wait for 3 seconds before writing to the file
+	writeMutex.Lock()
+	defer writeMutex.Unlock()
+
+	// Читаем текущее содержимое файла как объект (ключ = ставка).
+	merged := map[string]json.RawMessage{}
+	existing, err := os.ReadFile(fileManager.OutputFilePath)
+	if err != nil && !errors.Is(err, os.ErrNotExist) {
+		return err
+	}
+	if len(existing) > 0 {
+		if err := json.Unmarshal(existing, &merged); err != nil {
+			return err
+		}
+	}
+
+	// Результат горутины — это { "<ставка>": {цены...} }. Вливаем его ключи в merged.
+	encoded, err := json.Marshal(data)
 	if err != nil {
 		return err
 	}
-
-	encoder := json.NewEncoder(file)
-	err = encoder.Encode(data)
-	if err != nil {
-		file.Close()
+	var incoming map[string]json.RawMessage
+	if err := json.Unmarshal(encoded, &incoming); err != nil {
 		return err
 	}
+	for k, v := range incoming {
+		merged[k] = v
+	}
 
-	file.Close()
-	return nil
+	// Пишем весь объект обратно — файл всегда остаётся валидным JSON.
+	out, err := json.MarshalIndent(merged, "", "  ")
+	if err != nil {
+		return err
+	}
+	return os.WriteFile(fileManager.OutputFilePath, out, 0644)
 }
