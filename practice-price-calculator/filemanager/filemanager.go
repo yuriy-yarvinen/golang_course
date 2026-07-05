@@ -25,6 +25,7 @@ func (fileManager FileManager) ReadLines() ([]string, error) {
 	if err != nil {
 		return nil, errors.New("error reading file")
 	}
+	defer file.Close()
 
 	scanner := bufio.NewScanner(file)
 	lines := []string{}
@@ -33,10 +34,8 @@ func (fileManager FileManager) ReadLines() ([]string, error) {
 	}
 	err = scanner.Err()
 	if err != nil {
-		file.Close()
 		return nil, errors.New("error scan from file")
 	}
-	file.Close()
 	return lines, nil
 }
 
