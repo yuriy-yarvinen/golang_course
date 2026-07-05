@@ -15,22 +15,33 @@ func main() {
 	}
 	// cmdmanager := cmdmanager.CMDmanager{}
 	priceJobChannels := make([]chan bool, len(taxRates))
+	errorChannels := make([]chan error, len(taxRates))
 
 	for i, taxRate := range taxRates {
 		priceJob := prices.NewTaxIncludedPriceJob(taxRate, fileManager)
 		priceJobChannels[i] = make(chan bool)
+		errorChannels[i] = make(chan error)
 
-		go priceJob.Process(priceJobChannels[i])
+		go priceJob.Process(priceJobChannels[i], errorChannels[i])
 
 		// if err != nil {
 		// 	fmt.Println("error")
 		// 	fmt.Println(err)
 		// }
 	}
-	for _, priceJobChannel := range priceJobChannels {
-		status := <-priceJobChannel
-		if !status {
-			println("Error occurred in one of the price jobs.")
+
+	for index, taxRate := range taxRates {
+		select {
+		case err := <-errorChannels[index]:
+			if err != nil {
+				println("Error occurred while processing tax rate", taxRate, ":", err.Error())
+			}
+		case status := <-priceJobChannels[index]:
+			if !status {
+				println("Error occurred in one of the price jobs.")
+			} else {
+				println("Successfully processed tax rate", taxRate)
+			}
 		}
 	}
 

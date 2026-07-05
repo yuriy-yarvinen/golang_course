@@ -23,14 +23,13 @@ type PriceInfo struct {
 }
 
 // Process loads the input prices, applies the tax rate to each of them and
-// prints the resulting tax-included prices.
-func (job TaxIncludedPriceJob) Process(channel chan bool) {
+func (job TaxIncludedPriceJob) Process(channel chan bool, errorChannel chan error) {
 	defer close(channel)
+	defer close(errorChannel)
 
 	err := job.LoadData()
 	if err != nil {
-		fmt.Println("error loading data")
-		fmt.Println(err)
+		errorChannel <- err
 		channel <- false
 		return
 	}
@@ -48,8 +47,7 @@ func (job TaxIncludedPriceJob) Process(channel chan bool) {
 	}
 	errWrite := job.IOManager.WriteResult(result)
 	if errWrite != nil {
-		fmt.Println("error writing result")
-		fmt.Println(errWrite)
+		errorChannel <- errWrite
 		channel <- false
 		return
 	}
