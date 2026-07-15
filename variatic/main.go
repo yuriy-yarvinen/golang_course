@@ -27,6 +27,25 @@ func main() {
 	fmt.Printf("%d \t %b \n ", 3, 3)
 	fmt.Printf("%d \t %b \n ", 1<<50, 1<<50)
 	fmt.Printf("%d \t %b \n ", 1125899906842625, 1125899906842625)
+
+	type ByteSize int
+
+	const (
+		_           = iota // ignore first value by assigning to blank identifier
+		KB ByteSize = 1 << (10 * iota)
+		MB
+		GB
+		TB
+		PB
+		EB
+	)
+
+	fmt.Printf("%d \t\t\t %b\n", KB, KB)
+	fmt.Printf("%d \t\t %b\n", MB, MB)
+	fmt.Printf("%d \t\t %b\n", GB, GB)
+	fmt.Printf("%d \t\t %b\n", TB, TB)
+	fmt.Printf("%d \t %b\n", PB, PB)
+	fmt.Printf("%d \t %b\n", EB, EB)
 }
 
 func sum(numbers ...int) int {
