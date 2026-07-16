@@ -46,6 +46,11 @@ func main() {
 	fmt.Printf("%d \t\t %b\n", TB, TB)
 	fmt.Printf("%d \t %b\n", PB, PB)
 	fmt.Printf("%d \t %b\n", EB, EB)
+
+	s, i, f := "hello", 42, 3.14
+	fmt.Printf("%v, %v, %v\n", s, i, f)
+	fmt.Printf("%#v, %#v, %#v\n", s, i, f)
+	fmt.Printf("%T, %T, %T\n", s, i, f)
 }
 
 func sum(numbers ...int) int {
