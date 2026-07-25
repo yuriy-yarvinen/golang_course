@@ -1,6 +1,10 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"net/http"
+	"sync"
+)
 
 type Cart map[string]int32
 
@@ -24,15 +28,19 @@ func main() {
 
 	nums := make([]int, 1, 3)
 	fmt.Println("Nums:", nums)
+	// [0]
 
 	appendToSlice(nums, 1)
 	fmt.Println("Nums after appendToSlice:", nums)
+	// Nums after appendToSlice: [0]
 
 	copySlice(nums, []int{2, 3})
 	fmt.Println("Nums after copySlice:", nums)
+	// Nums after copySlice: [2]
 
 	// mutateSlice(nums, 1, 4)
 	// fmt.Println("Nums after mutateSlice:", nums)
+	// panic
 
 	nums2 := []int{1, 2, 3}
 
@@ -89,6 +97,53 @@ func main() {
 
 	err1 = nil
 	fmt.Println(isNil(err1))
+
+	// urls := []string{"https://dzen.ru", "https://google.com", "https://ya.ru"}
+
+	// wg := sync.WaitGroup{}
+	// for _, url := range urls {
+	// 	wg.Add(1)
+	// 	go GetHttpData(url, &wg)
+	// }
+
+	// wg.Wait()
+
+	set := []int{1, 2, 34, 1, 2}
+	set2 := []int{1, 2, 3, 4, 5}
+
+	fmt.Println(checkCoppies(set))
+	fmt.Println(checkCoppies(set2))
+}
+
+func checkCoppies(slice []int) bool {
+	checked := []int{}
+	for _, number := range slice {
+		if SliceContains(checked, number) {
+			return true
+		} else {
+			checked = append(checked, number)
+		}
+	}
+	return false
+}
+
+func SliceContains(slice []int, number int) bool {
+	for _, numberInSlice := range slice {
+		if number == numberInSlice {
+			return true
+		}
+	}
+	return false
+}
+
+func GetHttpData(url string, wg *sync.WaitGroup) {
+	defer wg.Done()
+	response, errHttp := http.Get(url)
+	if errHttp != nil {
+		fmt.Println(errHttp)
+		return
+	}
+	fmt.Println(response)
 }
 
 type errorCustom struct {
