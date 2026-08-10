@@ -7,30 +7,30 @@ import (
 )
 
 func main() {
-	user1, err := ReturnUser("https://spb.hh.ru/applicant/profile/me?user=user&date=123&time=333")
+	user1, err := GetUser("https://spb.hh.ru/applicant/profile/me?user=user&date=123&time=333")
 	if err != nil {
 		fmt.Println(err)
 	}
 	fmt.Println(user1)
 
-	user2, err := ReturnUser("https://spb.hh.ru/applicant/profile/me?user=yuriy&date=123&time=333")
+	user2, err := GetUser("https://spb.hh.ru/applicant/profile/me?user=yuriy&date=123&time=333")
 	if err != nil {
 		fmt.Println(err)
 	}
 	fmt.Println(user2)
-	user3, err := ReturnUser("https://spb.hh.ru/applicant/profile/me")
+	user3, err := GetUser("https://spb.hh.ru/applicant/profile/me")
 	if err != nil {
 		fmt.Println(err)
 	}
 	fmt.Println(user3)
-	user4, err := ReturnUser("https://spb.hh.ru/applicant/profile/me?date=123&time=333")
+	user4, err := GetUser("https://spb.hh.ru/applicant/profile/me?date=123&time=333")
 	if err != nil {
 		fmt.Println(err)
 	}
 	fmt.Println(user4)
 }
 
-func ReturnUser(url string) (string, error) {
+func GetUser(url string) (string, error) {
 	urlQuestionIndex := strings.Index(url, "?")
 	if urlQuestionIndex == -1 {
 		return "", errors.New("no ? in url")
